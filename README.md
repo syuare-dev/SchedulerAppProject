@@ -30,7 +30,7 @@
 1. **HTTP Method**
    - `POST`: CREATE
    - `GET` : READ
-   - `PUT`, `PATCH` : UPDATE
+   - `PATCH` : UPDATE
    - `DELETE` : DELETE
 
 2. **Restful API → URL Mapping**
@@ -46,19 +46,23 @@
 
 ### 일정 생성 / 작성하기
 - **Method** : `POST`
-- **URL**: `/api/schedules`
+- **URL** : `/api/schedules`
 
 ### 전체 일정 조회 (등록된 일정 불러오기)
 - **Method** : `GET`
-- **URL**: `/api/schedules`
+- **URL** : `/api/schedules`
 
 ### 선택 일정 조회
 - **Method** : `GET`
-- **URL**: `/api/schedules/{id}`
+- **URL** : `/api/schedules/{id}`
+
+### 선택 일정 수정
+- **Method** : `PATCH`
+- **URL** : `/api/schedules/{id}`
 
 ### 선택한 일정 삭제
 - **Method** : `GET`
-- **URL**: `/api/schedules/{id}`
+- **URL** : `/api/schedules/{id}`
 
 
 | 기능               | Method | URL                    | Request             | Response               | HTTP Status |
