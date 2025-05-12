@@ -31,7 +31,7 @@ public class ScheduleController {
      */
 
     @PostMapping
-    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto requestDto) {
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
 
         // 식별자(id) 1씩 증가
         long scheduleId = scheduleList.isEmpty() ? 1 : Collections.max(scheduleList.keySet()) + 1;
@@ -42,7 +42,7 @@ public class ScheduleController {
         // InMemory DB에 Schedule 저장
         scheduleList.put(scheduleId, schedule);
 
-        return new ScheduleResponseDto(schedule);
+        return new ResponseEntity<>(new ScheduleResponseDto(schedule), HttpStatus.CREATED);
     }
 
     /**
