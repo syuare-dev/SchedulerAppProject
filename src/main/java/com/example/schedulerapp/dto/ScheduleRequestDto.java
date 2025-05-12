@@ -2,7 +2,9 @@ package com.example.schedulerapp.dto;
 
 import lombok.Getter;
 
-import java.time.LocalDate;
+/**
+ * 클라이언트가 서버로 보낼 데이터
+ */
 
 @Getter
 public class ScheduleRequestDto {
@@ -10,6 +12,4 @@ public class ScheduleRequestDto {
     private String task;
     private String authorName;
     private String password;
-    private LocalDate createdDate;
-    private LocalDate modifiedDate;
 }
