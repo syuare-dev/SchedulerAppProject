@@ -45,6 +45,12 @@ public class ScheduleController {
         return new ScheduleResponseDto(schedule);
     }
 
+    /**
+     * 일정 조회(전체) 기능
+     * @return 일정이 저정된 HashMap 을 List 로 전체 조회
+     *         저장된 일정 데이터가 없을 경우 빈 배열로 조회
+     */
+
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules() {
 
@@ -58,11 +64,24 @@ public class ScheduleController {
 
     }
 
+    /**
+     * 일정 조회(단건) 기능
+     * @param id 식별자 Id를 활용 > 일정 조회
+     * @return 조회 id가 없을 경우 > 404 NOT FOUND 상태 코드 반환
+     *         조회 id가 있을 경우 > 해당 id 일정 데이터 + 200 OK 상태 코드 반환
+     */
+
     @GetMapping("/{id}")
-    public ScheduleResponseDto findScheduleById (@PathVariable Long id) {
+    public ResponseEntity<ScheduleResponseDto> findScheduleById (@PathVariable Long id) {
         Schedule schedule = scheduleList.get(id);
 
-        return new ScheduleResponseDto(schedule);
+        if(schedule == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new ScheduleResponseDto(schedule),HttpStatus.OK);
     }
+
+
 
 }
