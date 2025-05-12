@@ -4,14 +4,11 @@ import com.example.schedulerapp.dto.ScheduleRequestDto;
 import com.example.schedulerapp.dto.ScheduleResponseDto;
 import com.example.schedulerapp.entity.Schedule;
 import com.example.schedulerapp.service.ScheduleService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/schedules")
@@ -29,7 +26,7 @@ public class ScheduleController {
 
     /**
      * 일정 생성 기능
-     * @param requestDto task, authorName, password가 담긴 객체를 매개변수로 하여 요청받도록 함
+     * @param requestDto task, authorName, password 가 담긴 객체를 매개변수로 하여 요청받도록 함
      * @return 요청받은 데이터로 객체를 생성 후 반환
      */
 
@@ -47,4 +44,25 @@ public class ScheduleController {
 
         return new ScheduleResponseDto(schedule);
     }
+
+    @GetMapping
+    public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules() {
+
+        // init List + Map to List -> stream 활용
+        List<ScheduleResponseDto> responseList = scheduleList.values()
+                .stream()
+                .map(ScheduleResponseDto::new)
+                .toList();
+
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/{id}")
+    public ScheduleResponseDto findScheduleById (@PathVariable Long id) {
+        Schedule schedule = scheduleList.get(id);
+
+        return new ScheduleResponseDto(schedule);
+    }
+
 }
