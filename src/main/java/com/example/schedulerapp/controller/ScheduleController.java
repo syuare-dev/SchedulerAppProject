@@ -75,11 +75,50 @@ public class ScheduleController {
     public ResponseEntity<ScheduleResponseDto> findScheduleById (@PathVariable Long id) {
         Schedule schedule = scheduleList.get(id);
 
+        // NPE 방지
         if(schedule == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(new ScheduleResponseDto(schedule),HttpStatus.OK);
+    }
+
+    /**
+     * 일정 수정(단건) 기능
+     * @param id 식별자 id 활용 > 저장된 일정 조회
+     * @param requestDto 수정 요청할 데이터
+     * @return 저장된 일정이 없을 경우 > NPE 방지
+     *         저장된 일정은 있지만 password 가 틀렸을 경우 > 401 UNAUTHORIZED 상태 코드 반환
+     *         저장된 일정은 있지만 task || authorName 이 null 일 경우 > 400 BAD REQUEST 상태 코드 반환
+     *         저장된 일정이 있고, 정상적인 요청 데이터일 경우 > 일정 수정 + 200 OK 상태 코드 반환
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> updateTaskOrAuthorName(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto requestDto
+    ) {
+        // 저장된 일정 데이터 가져오기 (Id)
+        Schedule schedule = scheduleList.get(id);
+
+        // NPE 방지
+        if(schedule == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // password 가 틀렸을 경우 예외 처리
+        if (requestDto.getPassword() == null || !requestDto.getPassword().equals(schedule.getPassword())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        // task 혹은 authorName 값이 null 일 경우 예외 처리
+        if (requestDto.getTask() == null || requestDto.getAuthorName() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        schedule.updateSchedule(requestDto);
+
+        return new ResponseEntity<>(new ScheduleResponseDto(schedule), HttpStatus.OK);
+
     }
 
 
