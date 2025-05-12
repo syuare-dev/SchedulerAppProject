@@ -1,5 +1,6 @@
 package com.example.schedulerapp.entity;
 
+import com.example.schedulerapp.dto.ScheduleRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -31,7 +32,15 @@ public class Schedule {
         this.task = task;
         this.authorName = authorName;
         this.password = password;
-        this.createdDate = LocalDate.now();
+
+        LocalDate testCreatedDate = LocalDate.of(2025, 5, 7);
+        this.createdDate = testCreatedDate;
+        this.modifiedDate = testCreatedDate;
+    }
+
+    public void updateSchedule(ScheduleRequestDto requestDto) {
+        this.task = requestDto.getTask();
+        this.authorName = requestDto.getAuthorName();
         this.modifiedDate = LocalDate.now();
     }
 
