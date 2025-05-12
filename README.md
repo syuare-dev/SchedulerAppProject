@@ -21,7 +21,7 @@
 
 ## 📝 HTTP API 설계
 
-- 대부분의 API는 CRUD 작업을 수행한다.
+- 대부분의 API 는 CRUD 작업을 수행한다.
 
 ### 🔍 설계 순서
 1. **HTTP Method**
@@ -64,13 +64,13 @@
 
 ## 📌 API 상세 명세
 
-| 기능               | Method | URL                    | Request             | Response               | HTTP Status |
-|--------------------|--------|------------------------|---------------------|------------------------|-------------|
-| 일정 생성          | POST   | /api/schedules          | 요청 body (task, authorName, password) | 일정 생성 정보 (id, task, authorName, createdDate, modifiedDate) | 201 Created |
-| 전체 일정 조회     | GET    | /api/schedules          | 없음                | 다건 일정 정보         | 200 OK      |
-| 선택 일정 조회     | GET    | /api/schedules/{id}     | 없음                | 단건 일정 정보         | 200 OK      |
-| 선택 일정 수정     | PATCH  | /api/schedules/{id}     | task, authorName, password | 수정된 일정 정보       | 200 OK      |
-| 선택 일정 삭제     | DELETE | /api/schedules/{id}     | password            | 없음                   | 200 OK      |
+| 기능       | Method | URL                 | Request                              | Response                                                   | HTTP Status |
+|----------|--------|---------------------|--------------------------------------|------------------------------------------------------------|-------------|
+| 일정 생성    | POST   | /api/schedules      | 요청 body (task, authorName, password) | 일정 생성 정보 (id, task, authorName, createdDate, modifiedDate) | 201 Created |
+| 전체 일정 조회 | GET    | /api/schedules      | 없음                                   | 다건 일정 정보                                                   | 200 OK      |
+| 선택 일정 조회 | GET    | /api/schedules/{id} | 없음                                   | 단건 일정 정보                                                   | 200 OK      |
+| 선택 일정 수정 | PATCH  | /api/schedules/{id} | task, authorName, password           | 수정된 일정 정보                                                  | 200 OK      |
+| 선택 일정 삭제 | DELETE | /api/schedules/{id} | password                             | 없음                                                         | 200 OK      |
 
 ### 📫 HTTP 상태 코드
 
