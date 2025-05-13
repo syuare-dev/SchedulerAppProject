@@ -20,19 +20,9 @@ CREATE TABLE authors (
 );
 
 
-/*
-   schedules 테이블에 author_id 컬럼 추가
-   외래 키(Foreign Key)를 author_id 컬럼으로 선언 > id 컬럼 참조
-   authors > id 행 삭제 시 schedules id 참조 데이터가 있을 경우 삭제 X
-   authors > id 값 변경 시 schedules id 값도 자동 업데이트
- */
+# 컬럼 추가(NULL 허용)
 ALTER TABLE schedules
-    ADD COLUMN author_id BIGINT NOT NULL COMMENT '작성자 식별자' AFTER task,
-    ADD CONSTRAINT FK_schedule_author
-        FOREIGN KEY (author_id) REFERENCES authors(id)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE;
-
+    ADD COLUMN author_id BIGINT NULL COMMENT '작성자 식별자' AFTER task;
 
 /*
    authors >  name, created_date, modified_date 컬럼에 신규 데이터 삽입
@@ -49,4 +39,22 @@ FROM schedules;
  */
 UPDATE schedules s
 JOIN authors a ON s.authorName = a.name
-SET s.author_id = a.id;
+SET s.author_id = a.id
+WHERE s.author_id IS NULL;
+
+/*
+   schedules > author_id 컬럼을 NOT NULL 로 변경
+   외래 키(Foreign Key)를 author_id 컬럼으로 선언 > id 컬럼 참조
+   authors > id 행 삭제 시 schedules id 참조 데이터가 있을 경우 삭제 X
+   authors > id 값 변경 시 schedules id 값도 자동 업데이트
+ */
+ALTER TABLE schedules
+    MODIFY author_id BIGINT NOT NULL COMMENT '작성자 식별자' AFTER task,
+    ADD CONSTRAINT FK_schedule_author
+        FOREIGN KEY (author_id) REFERENCES authors(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE;
+
+
+
+
