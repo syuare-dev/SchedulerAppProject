@@ -11,4 +11,6 @@ public interface ScheduleService {
 
     List<ScheduleResponseDto> findAllSchedules();
 
+    ScheduleResponseDto findScheduleById(Long id);
+
 }

@@ -29,7 +29,6 @@ public class ScheduleController {
      *                    - password: 비밀번호
      * @return 생성된 ScheduleResponseDto 객체를 포함한 ResponseEntity
      *         - 상태코드 201 CREATED
-     *
      * 처리 순서:
      * 1) @RequestBody 로 전달된 ScheduleRequestDto 를 Service 레이어에 전달
      * 2) Service 의 CreatedSchedule 메서드가 Schedule Entity 저장 > DTO 로 변환
@@ -62,18 +61,11 @@ public class ScheduleController {
      * @return 조회 id가 없을 경우 > 404 NOT FOUND 상태 코드 반환
      *         조회 id가 있을 경우 > 해당 id 일정 데이터 + 200 OK 상태 코드 반환
      */
+    @GetMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> findScheduleById (@PathVariable Long id) {
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<ScheduleResponseDto> findScheduleById (@PathVariable Long id) {
-//        Schedule schedule = scheduleList.get(id);
-//
-//        // NPE 방지
-//        if(schedule == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//
-//        return new ResponseEntity<>(new ScheduleResponseDto(schedule),HttpStatus.OK);
-//    }
+        return new ResponseEntity<>(scheduleService.findScheduleById(id),HttpStatus.OK);
+    }
 
     /**
      * 저장된 일정 수정(단건) 기능

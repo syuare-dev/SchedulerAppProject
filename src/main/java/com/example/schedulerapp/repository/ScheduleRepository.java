@@ -10,4 +10,6 @@ public interface ScheduleRepository {
     Schedule createdSchedule(Schedule schedule);
 
     List<ScheduleResponseDto> findAllSchedules();
+
+    Schedule findScheduleById(Long id);
 }
