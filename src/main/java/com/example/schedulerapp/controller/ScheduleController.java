@@ -2,7 +2,6 @@ package com.example.schedulerapp.controller;
 
 import com.example.schedulerapp.dto.ScheduleRequestDto;
 import com.example.schedulerapp.dto.ScheduleResponseDto;
-import com.example.schedulerapp.entity.Schedule;
 import com.example.schedulerapp.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,48 +19,39 @@ public class ScheduleController {
         this.scheduleService = scheduleService;
     }
 
-    // 메서드 구현 목적 > InMemory 생성
-    private Map<Long, Schedule> scheduleList = new HashMap<>();
-
-
     /**
-     * 일정 생성 기능
-     * @param requestDto task, authorName, password 가 담긴 객체를 매개변수로 하여 요청받도록 함
-     * @return 요청받은 데이터로 객체를 생성 후 반환
+     * Controller 레이어 > 일정 생성 기능
+     *
+     * @param requestDto 클라이언트에서 요청한 일정 생성 정보가 담겨있는 DTO
+     *                    - task: 할 일
+     *                    - authorName: 작성자명
+     *                    - password: 비밀번호
+     * @return 생성된 ScheduleResponseDto 객체를 포함한 ResponseEntity
+     *         - 상태코드 201 CREATED
+     * 처리 순서:
+     * 1) @RequestBody 로 전달된 ScheduleRequestDto 를 Service 레이어에 전달
+     * 2) Service 의 CreatedSchedule 메서드가 Schedule Entity 저장 > DTO 로 변환
+     * 3) 변환된 DTO 를 ResponseEntity 에 담아 201 CREATED 로 반환
      */
-
     @PostMapping
-    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto requestDto) {
+    public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
 
-        // 식별자(id) 1씩 증가
-        long scheduleId = scheduleList.isEmpty() ? 1 : Collections.max(scheduleList.keySet()) + 1;
-
-        // 요청받은 데이터로 Schedule 객체 생성
-        Schedule schedule = new Schedule(scheduleId, requestDto.getTask(), requestDto.getAuthorName(), requestDto.getPassword());
-
-        // InMemory DB에 Schedule 저장
-        scheduleList.put(scheduleId, schedule);
-
-        return new ScheduleResponseDto(schedule);
+        return new ResponseEntity<>(scheduleService.createSchedule(requestDto), HttpStatus.CREATED);
     }
 
     /**
-     * 일정 조회(전체) 기능
-     * @return 일정이 저정된 HashMap 을 List 로 전체 조회
-     *         저장된 일정 데이터가 없을 경우 빈 배열로 조회
+     * Controller 레이어 > 일정 조회(전체) 기능
+     *
+     * @return 저장된 모든 일정을 ScheduleResponseDto List 형태로 반환하는 ResponseEntity
+     *         - 상태코드 200 OK
+     * 처리 순서:
+     * 1) Service 레이어의 findAllSchedules 메서드를 호출 > DTO 리스트 조회
+     * 2) 조회된 DTO 리스트를 ResponseEntity 에 담아 200 OK로 반환
      */
-
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules() {
 
-        // init List + Map to List -> stream 활용
-        List<ScheduleResponseDto> responseList = scheduleList.values()
-                .stream()
-                .map(ScheduleResponseDto::new)
-                .toList();
-
-        return new ResponseEntity<>(responseList, HttpStatus.OK);
-
+        return new ResponseEntity<>(scheduleService.findAllSchedules(), HttpStatus.OK);
     }
 
     /**
@@ -70,17 +60,10 @@ public class ScheduleController {
      * @return 조회 id가 없을 경우 > 404 NOT FOUND 상태 코드 반환
      *         조회 id가 있을 경우 > 해당 id 일정 데이터 + 200 OK 상태 코드 반환
      */
-
     @GetMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> findScheduleById (@PathVariable Long id) {
-        Schedule schedule = scheduleList.get(id);
 
-        // NPE 방지
-        if(schedule == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(new ScheduleResponseDto(schedule),HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.findScheduleById(id),HttpStatus.OK);
     }
 
     /**
@@ -97,28 +80,12 @@ public class ScheduleController {
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto requestDto
     ) {
-        // 저장된 일정 데이터 가져오기 (Id)
-        Schedule schedule = scheduleList.get(id);
-
-        // NPE 방지
-        if(schedule == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        // password 가 틀렸을 경우 예외 처리
-        if (requestDto.getPassword() == null || !requestDto.getPassword().equals(schedule.getPassword())) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
-        // task 혹은 authorName 값이 null 일 경우 예외 처리
-        if (requestDto.getTask() == null || requestDto.getAuthorName() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        schedule.updateSchedule(requestDto);
-
-        return new ResponseEntity<>(new ScheduleResponseDto(schedule), HttpStatus.OK);
-
+        return new ResponseEntity<>(scheduleService.updateTaskOrAuthorName(
+                id,
+                requestDto.getTask(),
+                requestDto.getAuthorName(),
+                requestDto.getPassword()),
+                HttpStatus.OK);
     }
 
     /**
@@ -135,24 +102,8 @@ public class ScheduleController {
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto requestDto
     ) {
-
-        // scheduleList 의 Key 값에 id가 포함되어 있을 경우
-        if (scheduleList.containsKey(id)) {
-
-            // 저장된 일정 데이터 가져오기 (Id)
-            Schedule schedule = scheduleList.get(id);
-
-            // password 가 틀렸을 경우 예외 처리
-            if (requestDto.getPassword() == null || !requestDto.getPassword().equals(schedule.getPassword())) {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
-
-            scheduleList.remove(id);
-
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        scheduleService.deleteSchedule(id, requestDto.getPassword());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
