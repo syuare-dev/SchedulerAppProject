@@ -57,7 +57,7 @@ public class ScheduleRepositoryJdbc implements ScheduleRepository{
 
     @Override
     public int updateTaskOrAuthorName(Long id, String task, String authorName, String password) {
-        return jdbcTemplate.update("UPDATE schedules set task = ?, authorName = ?, modifiedDate = ? where id = ? AND password = ?", task, authorName, LocalDate.now(), id, password);
+        return jdbcTemplate.update("UPDATE schedules set task = ?, authorName = ?, modified_date = ? where id = ? AND password = ?", task, authorName, LocalDate.now(), id, password);
     }
 
     @Override
@@ -71,8 +71,8 @@ public class ScheduleRepositoryJdbc implements ScheduleRepository{
                 rs.getLong("id"),
                 rs.getString("task"),
                 rs.getString("authorName"),
-                rs.getDate("createdDate").toLocalDate(),
-                rs.getDate("modifiedDate").toLocalDate()
+                rs.getDate("created_date").toLocalDate(),
+                rs.getDate("modified_date").toLocalDate()
         );
     }
 
@@ -83,8 +83,8 @@ public class ScheduleRepositoryJdbc implements ScheduleRepository{
                 rs.getString("task"),
                 rs.getString("authorName"),
                 rs.getString("password"),
-                rs.getDate("createdDate").toLocalDate(),
-                rs.getDate("modifiedDate").toLocalDate()
+                rs.getDate("created_date").toLocalDate(),
+                rs.getDate("modified_date").toLocalDate()
         );
     }
 }
