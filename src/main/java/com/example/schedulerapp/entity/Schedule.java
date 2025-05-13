@@ -1,6 +1,5 @@
 package com.example.schedulerapp.entity;
 
-import com.example.schedulerapp.dto.ScheduleRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
