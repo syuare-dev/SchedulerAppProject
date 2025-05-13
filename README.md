@@ -79,3 +79,7 @@
 - **400 Bad Request**: 잘못된 데이터로 요청되었을 때 반환된다.
 - **401 UNAUTHORIZED**: 수정/삭제 시도 요청 시 password 데이터 값과 일정 생성 시 저장된 password 값이 일치하지 않을 때 반환한다.
 - **404 Not Found**: 요청한 리소스가 없을 때 반환된다.
+
+***
+## ERD ( Entity Relationship Diagram)
+<img src="src/main/resources/static/ScheduleApp_ERD.png" alt="" />
