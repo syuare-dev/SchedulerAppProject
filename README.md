@@ -82,4 +82,4 @@
 
 ***
 ## ERD ( Entity Relationship Diagram)
-<img src="/src/main/resources/static/SchedulApp_ERD.png" width="700" />
+<img src="src/main/resources/static/ScheduleApp_ERD.png" alt="" />
