@@ -21,11 +21,20 @@ public class ScheduleController {
     }
 
     /**
-     * 일정 생성 기능
-     * @param requestDto task, authorName, password 가 담긴 객체를 매개변수로 하여 요청받도록 함
-     * @return 요청받은 데이터로 객체를 생성 후 반환
+     * Controller 레이어 > 일정 생성 기능
+     *
+     * @param requestDto 클라이언트에서 요청한 일정 생성 정보가 담겨있는 DTO
+     *                    - task: 할 일
+     *                    - authorName: 작성자명
+     *                    - password: 비밀번호
+     * @return 생성된 ScheduleResponseDto 객체를 포함한 ResponseEntity
+     *         - 상태코드 201 CREATED
+     *
+     * 처리 순서:
+     * 1) @RequestBody 로 전달된 ScheduleRequestDto 를 Service 레이어에 전달
+     * 2) Service 의 CreatedSchedule 메서드가 Schedule Entity 저장 > DTO 로 변환
+     * 3) 변환된 DTO 를 ResponseEntity 에 담아 201 CREATED 로 반환
      */
-
     @PostMapping
     public ResponseEntity<ScheduleResponseDto> createSchedule(@RequestBody ScheduleRequestDto requestDto) {
 
@@ -33,23 +42,19 @@ public class ScheduleController {
     }
 
     /**
-     * 일정 조회(전체) 기능
-     * @return 일정이 저정된 HashMap 을 List 로 전체 조회
-     *         저장된 일정 데이터가 없을 경우 빈 배열로 조회
+     * Controller 레이어 > 일정 조회(전체) 기능
+     *
+     * @return 저장된 모든 일정을 ScheduleResponseDto List 형태로 반환하는 ResponseEntity
+     *         - 상태코드 200 OK
+     * 처리 순서:
+     * 1) Service 레이어의 findAllSchedules 메서드를 호출 > DTO 리스트 조회
+     * 2) 조회된 DTO 리스트를 ResponseEntity 에 담아 200 OK로 반환
      */
+    @GetMapping
+    public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules() {
 
-//    @GetMapping
-//    public ResponseEntity<List<ScheduleResponseDto>> findAllSchedules() {
-//
-//        // init List + Map to List -> stream 활용
-//        List<ScheduleResponseDto> responseList = scheduleList.values()
-//                .stream()
-//                .map(ScheduleResponseDto::new)
-//                .toList();
-//
-//        return new ResponseEntity<>(responseList, HttpStatus.OK);
-//
-//    }
+        return new ResponseEntity<>(scheduleService.findAllSchedules(), HttpStatus.OK);
+    }
 
     /**
      * 저장된 일정 조회(단건) 기능
