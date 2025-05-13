@@ -33,17 +33,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
 
-        Schedule schedule = new Schedule(
-                requestDto.getTask(),
-                requestDto.getAuthorName(),
-                requestDto.getPassword()
-        );
+        Schedule schedule = new Schedule(requestDto.getTask(), requestDto.getAuthorName(), requestDto.getPassword());
 
-        // Repository 레이어에 저장 요청
-        Schedule createdSchedule = scheduleRepository.createdSchedule(schedule);
-
-        // DTO 로 변환해 반환
-        return new ScheduleResponseDto(createdSchedule);
+        return scheduleRepository.createdSchedule(schedule);
 
     }
 
@@ -66,11 +58,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
 
-        Schedule schedule = scheduleRepository.findScheduleById(id);
-
-        if (schedule == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
-        }
+        Schedule schedule = scheduleRepository.findScheduleByIDOrElseThrow(id);
 
         return new ScheduleResponseDto(schedule);
     }
@@ -78,44 +66,45 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleResponseDto updateTaskOrAuthorName(Long id, String task, String authorName, String password) {
 
-        Schedule schedule = scheduleRepository.findScheduleById(id);
-
-        // NPE 방지
-        if(schedule == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
-        }
-
-        // password 가 틀렸을 경우 예외 처리
-        if (password == null || !password.equals(schedule.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password do not match");
-        }
+        Schedule schedule = scheduleRepository.findScheduleByIDOrElseThrow(id);
 
         // task 혹은 authorName 값이 null 일 경우 예외 처리
         if (task == null || authorName == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task or authorName is a required value");
         }
 
-        schedule.updateSchedule(task, authorName);
+        // password 가 틀렸을 경우 예외 처리
+        if (password == null || !password.equals(schedule.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password do not match");
+        }
 
-        return new ScheduleResponseDto(schedule);
+        int updateRow = scheduleRepository.updateTaskOrAuthorName(id, task, authorName, password);
+
+        // NPE 방지
+        if(updateRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+
+        Schedule updated = scheduleRepository.findScheduleByIDOrElseThrow(id);
+
+        return new ScheduleResponseDto(updated);
     }
 
     @Override
     public void deleteSchedule(Long id, String password) {
 
-        Schedule schedule = scheduleRepository.findScheduleById(id);
-
-        // NPE 방지
-        if(schedule == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
-        }
+        Schedule schedule = scheduleRepository.findScheduleByIDOrElseThrow(id);
 
         // password 가 틀렸을 경우 예외 처리
         if (password == null || !password.equals(schedule.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password do not match");
         }
 
-        scheduleRepository.deleteSchedule(id);
+        int deleteRow = scheduleRepository.deleteSchedule(id, password);
 
+        // NPE 방지
+        if(deleteRow == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
     }
 }
