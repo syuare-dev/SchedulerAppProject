@@ -7,11 +7,13 @@ import java.util.List;
 
 public interface ScheduleRepository {
 
-    Schedule createdSchedule(Schedule schedule);
+    ScheduleResponseDto createdSchedule(Schedule schedule);
 
     List<ScheduleResponseDto> findAllSchedules();
 
-    Schedule findScheduleById(Long id);
+    Schedule findScheduleByIDOrElseThrow(Long id);
 
-    void deleteSchedule(Long id);
+    int updateTaskOrAuthorName(Long id, String task, String authorName, String password);
+
+    int deleteSchedule(Long id, String password);
 }
