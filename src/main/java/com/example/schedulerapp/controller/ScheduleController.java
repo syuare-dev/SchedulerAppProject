@@ -2,7 +2,6 @@ package com.example.schedulerapp.controller;
 
 import com.example.schedulerapp.dto.ScheduleRequestDto;
 import com.example.schedulerapp.dto.ScheduleResponseDto;
-import com.example.schedulerapp.entity.Schedule;
 import com.example.schedulerapp.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
