@@ -11,6 +11,7 @@ public class Schedule {
 
     private Long id;
     private String task;
+    private Long authorId;
     private String authorName;
     private String password;
     private LocalDate createdDate;
