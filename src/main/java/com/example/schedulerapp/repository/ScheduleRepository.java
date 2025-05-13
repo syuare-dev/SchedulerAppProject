@@ -12,4 +12,6 @@ public interface ScheduleRepository {
     List<ScheduleResponseDto> findAllSchedules();
 
     Schedule findScheduleById(Long id);
+
+    void deleteSchedule(Long id);
 }

@@ -63,7 +63,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public Schedule findScheduleById(Long id) {
-
         return scheduleList.get(id);
+    }
+
+    @Override
+    public void deleteSchedule(Long id) {
+        scheduleList.remove(id);
     }
 }

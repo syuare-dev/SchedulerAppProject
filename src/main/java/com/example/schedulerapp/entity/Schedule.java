@@ -38,9 +38,9 @@ public class Schedule {
         this.modifiedDate = testCreatedDate;
     }
 
-    public void updateSchedule(ScheduleRequestDto requestDto) {
-        this.task = requestDto.getTask();
-        this.authorName = requestDto.getAuthorName();
+    public void updateSchedule(String task, String authorName) {
+        this.task = task;
+        this.authorName = authorName;
         this.modifiedDate = LocalDate.now();
     }
 

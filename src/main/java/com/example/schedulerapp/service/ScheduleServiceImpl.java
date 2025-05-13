@@ -5,6 +5,7 @@ import com.example.schedulerapp.dto.ScheduleResponseDto;
 import com.example.schedulerapp.entity.Schedule;
 import com.example.schedulerapp.repository.ScheduleRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -73,5 +74,49 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
 
         return new ScheduleResponseDto(schedule);
+    }
+
+    @Override
+    public ScheduleResponseDto updateTaskOrAuthorName(Long id, String task, String authorName, String password) {
+
+        Schedule schedule = scheduleRepository.findScheduleById(id);
+
+        // NPE 방지
+        if(schedule == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+
+        // password 가 틀렸을 경우 예외 처리
+        if (password == null || !password.equals(schedule.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password do not match");
+        }
+
+        // task 혹은 authorName 값이 null 일 경우 예외 처리
+        if (task == null || authorName == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Task or authorName is a required value");
+        }
+
+        schedule.updateSchedule(task, authorName);
+
+        return new ScheduleResponseDto(schedule);
+    }
+
+    @Override
+    public void deleteSchedule(Long id, String password) {
+
+        Schedule schedule = scheduleRepository.findScheduleById(id);
+
+        // NPE 방지
+        if(schedule == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id);
+        }
+
+        // password 가 틀렸을 경우 예외 처리
+        if (password == null || !password.equals(schedule.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Password do not match");
+        }
+
+        scheduleRepository.deleteSchedule(id);
+
     }
 }

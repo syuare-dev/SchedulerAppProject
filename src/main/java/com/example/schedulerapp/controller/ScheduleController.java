@@ -76,34 +76,18 @@ public class ScheduleController {
      *         저장된 일정은 있지만 task || authorName 이 null 일 경우 > 400 BAD REQUEST 상태 코드 반환
      *         저장된 일정이 있고, 정상적인 요청 데이터일 경우 > 일정 수정 + 200 OK 상태 코드 반환
      */
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<ScheduleResponseDto> updateTaskOrAuthorName(
-//            @PathVariable Long id,
-//            @RequestBody ScheduleRequestDto requestDto
-//    ) {
-//        // 저장된 일정 데이터 가져오기 (Id)
-//        Schedule schedule = scheduleList.get(id);
-//
-//        // NPE 방지
-//        if(schedule == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//
-//        // password 가 틀렸을 경우 예외 처리
-//        if (requestDto.getPassword() == null || !requestDto.getPassword().equals(schedule.getPassword())) {
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
-//
-//        // task 혹은 authorName 값이 null 일 경우 예외 처리
-//        if (requestDto.getTask() == null || requestDto.getAuthorName() == null) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//
-//        schedule.updateSchedule(requestDto);
-//
-//        return new ResponseEntity<>(new ScheduleResponseDto(schedule), HttpStatus.OK);
-//
-//    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ScheduleResponseDto> updateTaskOrAuthorName(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto requestDto
+    ) {
+        return new ResponseEntity<>(scheduleService.updateTaskOrAuthorName(
+                id,
+                requestDto.getTask(),
+                requestDto.getAuthorName(),
+                requestDto.getPassword()),
+                HttpStatus.OK);
+    }
 
     /**
      * 저장된 일정 삭제 기능
@@ -114,29 +98,13 @@ public class ScheduleController {
      *          2) password 일치: 저장된 데이터(id) 삭제 + 200 OK HTTP 상태 코드 반환
      *         scheduleList 의 Key 값에 id가 포함되어 있지 않을 경우: 404 NOT FOUND HTTP 상태 코드 반환
      */
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteSchedule(
-//            @PathVariable Long id,
-//            @RequestBody ScheduleRequestDto requestDto
-//    ) {
-//
-//        // scheduleList 의 Key 값에 id가 포함되어 있을 경우
-//        if (scheduleList.containsKey(id)) {
-//
-//            // 저장된 일정 데이터 가져오기 (Id)
-//            Schedule schedule = scheduleList.get(id);
-//
-//            // password 가 틀렸을 경우 예외 처리
-//            if (requestDto.getPassword() == null || !requestDto.getPassword().equals(schedule.getPassword())) {
-//                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//            }
-//
-//            scheduleList.remove(id);
-//
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        }
-//
-//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto requestDto
+    ) {
+        scheduleService.deleteSchedule(id, requestDto.getPassword());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }
