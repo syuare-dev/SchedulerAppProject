@@ -1,5 +1,6 @@
 package com.example.schedulerapp.repository;
 
+import com.example.schedulerapp.dto.AuthorResponseDto;
 import com.example.schedulerapp.dto.ScheduleResponseDto;
 import com.example.schedulerapp.entity.Schedule;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +49,20 @@ public class ScheduleRepositoryJdbc implements ScheduleRepository{
 
     @Override
     public List<ScheduleResponseDto> findAllSchedules() {
-        return jdbcTemplate.query("select * from schedules", scheduleRowMapper());
+        return jdbcTemplate.query
+                ("SELECT " +
+                        " s.id," +
+                        " s.task," +
+                        " s.created_date," +
+                        " s.modified_date," +
+                        " a.id AS author_id," +
+                        " a.name AS author_name," +
+                        " a.email AS author_email," +
+                        " a.created_date AS author_created_date," +
+                        " a.modified_date AS author_modified_date " +
+                        " FROM schedules s JOIN authors a ON a.id = s.author_id",
+                        scheduleRowMapperWithAuthorDto()
+                );
     }
 
     @Override
@@ -86,5 +102,42 @@ public class ScheduleRepositoryJdbc implements ScheduleRepository{
                 rs.getDate("created_date").toLocalDate(),
                 rs.getDate("modified_date").toLocalDate()
         );
+    }
+
+    //
+    private RowMapper<ScheduleResponseDto> scheduleRowMapperWithAuthorDto() {
+        return new RowMapper<ScheduleResponseDto>() {
+            @Override
+            public ScheduleResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+
+                // Author DTO
+                AuthorResponseDto author = authorRowMapper().mapRow(rs, rowNum);
+
+                // Schedule DTO
+                return new ScheduleResponseDto(
+                        rs.getLong("id"),
+                        rs.getString("task"),
+                        author,
+                        rs.getDate("created_date").toLocalDate(),
+                        rs.getDate("modified_date").toLocalDate()
+                );
+            }
+        };
+    }
+
+
+    private RowMapper<AuthorResponseDto> authorRowMapper() {
+        return new RowMapper<AuthorResponseDto>() {
+            @Override
+            public AuthorResponseDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new AuthorResponseDto(
+                        rs.getLong("author_id"),
+                        rs.getString("author_name"),
+                        rs.getString("author_email"),
+                        rs.getDate("author_created_date").toLocalDate(),
+                        rs.getDate("author_modified_date").toLocalDate()
+                );
+            }
+        };
     }
 }

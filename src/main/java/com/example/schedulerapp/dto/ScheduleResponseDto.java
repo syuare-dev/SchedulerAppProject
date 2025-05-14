@@ -32,4 +32,20 @@ public class ScheduleResponseDto {
         this.createdDate = schedule.getCreatedDate();
         this.modifiedDate = schedule.getModifiedDate();
     }
+
+    public ScheduleResponseDto (Long id, String task, String authorName, LocalDate createdDate, LocalDate modifiedDate) {
+        this.id = id;
+        this.task = task;
+        this.authorName = authorName;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+    }
+
+    public ScheduleResponseDto (Long id, String task, AuthorResponseDto author, LocalDate createdDate, LocalDate modifiedDate) {
+        this.id = id;
+        this.task = task;
+        this.author = author;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+    }
 }

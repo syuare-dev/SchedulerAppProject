@@ -1,11 +1,13 @@
 package com.example.schedulerapp.dto;
 
 import com.example.schedulerapp.entity.Author;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
 @Getter
+@AllArgsConstructor
 public class AuthorResponseDto {
 
     private Long id;

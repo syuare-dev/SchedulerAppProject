@@ -36,6 +36,15 @@ public class Schedule {
         this.modifiedDate = testCreatedDate;
     }
 
+    public Schedule(Long id, String task, String authorName, String password, LocalDate createdDate, LocalDate modifiedDate) {
+        this.id = id;
+        this.task = task;
+        this.authorName = authorName;
+        this.password = password;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+    }
+
     public void updateSchedule(String task, String authorName) {
         this.task = task;
         this.authorName = authorName;
