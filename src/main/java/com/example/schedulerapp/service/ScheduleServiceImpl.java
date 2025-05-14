@@ -1,5 +1,6 @@
 package com.example.schedulerapp.service;
 
+import com.example.schedulerapp.dto.PageResponseDto;
 import com.example.schedulerapp.dto.ScheduleRequestDto;
 import com.example.schedulerapp.dto.ScheduleResponseDto;
 import com.example.schedulerapp.entity.Schedule;
@@ -53,6 +54,16 @@ public class ScheduleServiceImpl implements ScheduleService {
     public List<ScheduleResponseDto> findAllSchedules() {
 
         return scheduleRepository.findAllSchedules();
+    }
+
+    @Override
+    public PageResponseDto<ScheduleResponseDto> findSchedulesPagination(Integer page, Integer size) {
+        Integer offset = (page - 1) * size;
+        List<ScheduleResponseDto> schedules = scheduleRepository.findSchedulesPagination(offset, size);
+        Long total = scheduleRepository.countSchedules();
+        Integer totalPages = (int) Math.ceil((double) total / size);
+
+        return new PageResponseDto<>(schedules, page, size, total, totalPages);
     }
 
     @Override

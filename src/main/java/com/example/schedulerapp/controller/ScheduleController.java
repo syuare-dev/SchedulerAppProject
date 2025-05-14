@@ -1,11 +1,13 @@
 package com.example.schedulerapp.controller;
 
+import com.example.schedulerapp.dto.PageResponseDto;
 import com.example.schedulerapp.dto.ScheduleRequestDto;
 import com.example.schedulerapp.dto.ScheduleResponseDto;
 import com.example.schedulerapp.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -53,6 +55,19 @@ public class ScheduleController {
 
         return new ResponseEntity<>(scheduleService.findAllSchedules(), HttpStatus.OK);
     }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<PageResponseDto<ScheduleResponseDto>> findSchedulesPagination(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        if (page < 0  || size <0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page and size must be positive values.");
+        }
+
+        return new ResponseEntity<>(scheduleService.findSchedulesPagination(page, size), HttpStatus.OK);
+    }
+
 
     /**
      * 저장된 일정 조회(단건) 기능

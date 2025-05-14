@@ -72,6 +72,32 @@ public class ScheduleRepositoryJdbc implements ScheduleRepository{
     }
 
     @Override
+    public List<ScheduleResponseDto> findSchedulesPagination(Integer offset, Integer limit) {
+        return jdbcTemplate.query
+                ("SELECT " +
+                                " s.id," +
+                                " s.task," +
+                                " s.created_date," +
+                                " s.modified_date," +
+                                " a.id AS author_id," +
+                                " a.name AS author_name," +
+                                " a.email AS author_email," +
+                                " a.created_date AS author_created_date," +
+                                " a.modified_date AS author_modified_date " +
+                                " FROM schedules s JOIN authors a ON a.id = s.author_id " +
+                                " LIMIT ? OFFSET ?",
+                        scheduleRowMapperWithAuthorDto(), limit, offset
+                );
+    }
+
+    @Override
+    public Long countSchedules() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM schedules", Long.class);
+    }
+
+
+
+    @Override
     public int updateTaskOrAuthorName(Long id, String task, String authorName, String password) {
         return jdbcTemplate.update("UPDATE schedules set task = ?, authorName = ?, modified_date = ? where id = ? AND password = ?", task, authorName, LocalDate.now(), id, password);
     }
